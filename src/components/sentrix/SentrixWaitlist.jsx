@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { ArrowRight, CheckCircle2, Gift, Tag, Shield, Users } from "lucide-react";
+import { ArrowRight, CheckCircle2, Gift, Tag, Shield, Users, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { base44 } from "@/api/base44Client";
 
 const highlights = [
   { icon: Gift, text: "First 3 legal dispatches — free" },
@@ -11,15 +12,29 @@ const highlights = [
 export default function SentrixWaitlist() {
   const [form, setForm] = useState({ name: "", email: "", size: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.email.includes("@")) { toast.error("Please enter a valid email."); return; }
     if (!form.name.trim()) { toast.error("Please enter your name."); return; }
-    setSubmitted(true);
-    toast.success("Beta access requested! We'll be in touch within 24 hours.");
+    setLoading(true);
+    try {
+      await base44.functions.invoke('hubspotLead', {
+        name: form.name,
+        email: form.email,
+        companySize: form.size,
+        source: 'EDS Sentrix Waitlist',
+      });
+      setSubmitted(true);
+      toast.success("Beta access requested! We'll be in touch within 24 hours.");
+    } catch {
+      toast.error("Submission failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -112,10 +127,10 @@ export default function SentrixWaitlist() {
 
               <button
                 type="submit"
-                className="group w-full h-12 bg-tactical-gold hover:bg-tactical-amber text-navy-900 font-bold rounded-xl text-sm transition-all duration-200 hover:shadow-xl hover:shadow-tactical-gold/20 active:scale-[0.99] flex items-center justify-center gap-2 mt-2"
+                disabled={loading}
+                className="group w-full h-12 bg-tactical-gold hover:bg-tactical-amber disabled:opacity-60 text-navy-900 font-bold rounded-xl text-sm transition-all duration-200 hover:shadow-xl hover:shadow-tactical-gold/20 active:scale-[0.99] flex items-center justify-center gap-2 mt-2"
               >
-                Request Access
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Request Access <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" /></>}
               </button>
 
               <p className="text-slate-600 text-xs text-center">

@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, ShoppingBag, Shield, Activity, ChevronRight, CheckCircle2, Star, Users } from "lucide-react";
+import { Search, ShoppingBag, Shield, Activity, ChevronRight, CheckCircle2, Users, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { base44 } from "@/api/base44Client";
 
 const products = [
   {
@@ -85,6 +86,8 @@ export default function Shop() {
   const [activeTab, setActiveTab] = useState("shop");
   const [selectedOps, setSelectedOps] = useState(null);
   const [opsSubmitted, setOpsSubmitted] = useState(false);
+  const [opsLoading, setOpsLoading] = useState(false);
+  const [opsTicketRef, setOpsTicketRef] = useState("");
   const [opsForm, setOpsForm] = useState({ name: "", date: "", location: "", notes: "" });
 
   const filtered = products.filter(p => {
@@ -93,10 +96,27 @@ export default function Shop() {
     return matchCat && matchSearch;
   });
 
-  const handleOpsSubmit = () => {
+  const handleOpsSubmit = async () => {
     if (!selectedOps || !opsForm.name) { toast.error("Please complete required fields."); return; }
-    setOpsSubmitted(true);
-    toast.success(`${selectedOps.label} request submitted. Our team will contact you within 2 hours.`);
+    setOpsLoading(true);
+    try {
+      const res = await base44.functions.invoke('clickupDispatch', {
+        serviceType: 'Tactical Ops',
+        serviceName: selectedOps.label,
+        address: opsForm.location,
+        date: opsForm.date,
+        notes: `Requestor: ${opsForm.name}\n${opsForm.notes}`,
+        priority: 'high',
+        requestorName: opsForm.name,
+      });
+      setOpsTicketRef(res.data?.taskId ? `#OPS-${res.data.taskId.slice(-5).toUpperCase()}` : `#OPS-${Math.floor(100 + Math.random() * 899)}`);
+      setOpsSubmitted(true);
+      toast.success(`${selectedOps.label} request sent to ClickUp — high priority. Our team will contact you within 2 hours.`);
+    } catch {
+      toast.error("Submission failed. Please try again.");
+    } finally {
+      setOpsLoading(false);
+    }
   };
 
   return (
@@ -207,8 +227,8 @@ export default function Shop() {
                     <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Mission Notes</label>
                     <textarea rows={3} placeholder="Threat context, special requirements..." value={opsForm.notes} onChange={e => setOpsForm({ ...opsForm, notes: e.target.value })} className="w-full px-3 py-2 text-sm border border-input bg-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-ring resize-none" />
                   </div>
-                  <Button onClick={handleOpsSubmit} disabled={!selectedOps} className="w-full bg-tactical-gold hover:bg-tactical-amber text-navy-900 font-bold gap-2">
-                    Submit Ops Request <ChevronRight className="w-4 h-4" />
+                  <Button onClick={handleOpsSubmit} disabled={!selectedOps || opsLoading} className="w-full bg-tactical-gold hover:bg-tactical-amber text-navy-900 font-bold gap-2">
+                    {opsLoading ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</> : <>Submit Ops Request <ChevronRight className="w-4 h-4" /></>}
                   </Button>
                 </div>
               ) : (
@@ -218,8 +238,8 @@ export default function Shop() {
                   </div>
                   <div>
                     <p className="font-bold text-foreground">Ops Request Received</p>
-                    <p className="text-sm text-muted-foreground mt-1">Mission Ref: #OPS-{Math.floor(100 + Math.random() * 899)}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">Our team will contact you within 2 hours to confirm.</p>
+                    <p className="text-sm text-muted-foreground mt-1">Mission Ref: {opsTicketRef}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Task created in ClickUp · Our team will contact you within 2 hours.</p>
                   </div>
                   <Button variant="outline" onClick={() => { setOpsSubmitted(false); setSelectedOps(null); setOpsForm({ name: "", date: "", location: "", notes: "" }); }}>New Request</Button>
                 </div>

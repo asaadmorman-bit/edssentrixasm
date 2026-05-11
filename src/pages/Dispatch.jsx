@@ -5,8 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Radio, ShieldCheck, FileText, MapPin, Calendar, ChevronRight, CheckCircle2, Upload, Eye, Lock } from "lucide-react";
+import { Radio, ShieldCheck, MapPin, Calendar, ChevronRight, CheckCircle2, Eye, Lock, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { base44 } from "@/api/base44Client";
 
 const TABS = ["Legal Services", "Property Services"];
 
@@ -27,16 +28,34 @@ export default function Dispatch() {
   const [date, setDate] = useState("");
   const [notes, setNotes] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [ticketRef, setTicketRef] = useState("");
 
   const services = tab === 0 ? legalServices : propertyServices;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedService || !address) {
       toast.error("Please complete all required fields.");
       return;
     }
-    setSubmitted(true);
-    toast.success("Dispatch request submitted — ETA confirmation within 15 minutes.");
+    setLoading(true);
+    try {
+      const res = await base44.functions.invoke('clickupDispatch', {
+        serviceType: TABS[tab],
+        serviceName: selectedService,
+        address,
+        date,
+        notes,
+        priority: 'normal',
+      });
+      setTicketRef(res.data?.taskId ? `#D-${res.data.taskId.slice(-5).toUpperCase()}` : `#D-${Math.floor(2900 + Math.random() * 99)}`);
+      setSubmitted(true);
+      toast.success("Dispatch request submitted to ClickUp — ETA confirmation within 15 minutes.");
+    } catch {
+      toast.error("Submission failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleReset = () => {
@@ -232,6 +251,7 @@ export default function Dispatch() {
                         <Button disabled={!address} onClick={() => setStep(3)} className="flex-1 bg-tactical-gold hover:bg-tactical-amber text-navy-900 font-bold gap-2">
                           Review <ChevronRight className="w-4 h-4" />
                         </Button>
+
                       </div>
                     </div>
                   )}
@@ -254,8 +274,8 @@ export default function Dispatch() {
                       </div>
                       <div className="flex gap-2">
                         <Button variant="outline" onClick={() => setStep(2)} className="flex-1">Back</Button>
-                        <Button onClick={handleSubmit} className="flex-1 bg-tactical-gold hover:bg-tactical-amber text-navy-900 font-bold">
-                          Confirm Dispatch
+                        <Button onClick={handleSubmit} disabled={loading} className="flex-1 bg-tactical-gold hover:bg-tactical-amber text-navy-900 font-bold gap-2">
+                          {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</> : "Confirm Dispatch"}
                         </Button>
                       </div>
                     </div>
@@ -268,8 +288,8 @@ export default function Dispatch() {
                   </div>
                   <div>
                     <p className="font-bold text-foreground">Dispatch Confirmed!</p>
-                    <p className="text-sm text-muted-foreground mt-1">Reference #D-{Math.floor(2900 + Math.random() * 99)}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">ETA confirmation within 15 minutes via SMS</p>
+                    <p className="text-sm text-muted-foreground mt-1">Reference {ticketRef}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Task created in ClickUp · ETA confirmation within 15 minutes via SMS</p>
                   </div>
                   <Button variant="outline" onClick={handleReset}>New Request</Button>
                 </div>
