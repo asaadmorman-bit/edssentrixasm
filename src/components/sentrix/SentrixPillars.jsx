@@ -60,11 +60,11 @@ export default function SentrixPillars() {
             <span className="text-slate-400 text-[11px] font-bold uppercase tracking-widest">Core Platform</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white mb-4">
-            Three Pillars.{" "}
+            Four Pillars.{" "}
             <span className="text-tactical-gold">One Platform.</span>
           </h2>
           <p className="text-slate-400 text-lg">
-            Sentrix unifies the three most neglected layers of SMB security into a single, auditable dashboard.
+            EDS Sentrix ASM unifies the four most critical layers of SMB and enterprise security into a single, auditable dashboard.
           </p>
         </div>
 

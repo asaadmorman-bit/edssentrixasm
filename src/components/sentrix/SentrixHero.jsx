@@ -41,22 +41,22 @@ export default function SentrixHero() {
             <div className="inline-flex items-center gap-2 bg-tactical-gold/10 border border-tactical-gold/25 rounded-full px-4 py-1.5 mb-7">
               <div className="w-1.5 h-1.5 bg-tactical-gold rounded-full animate-pulse" />
               <span className="text-tactical-gold text-xs font-bold uppercase tracking-widest">
-                Sentrix · by Emerging Defense Solutions
+                EDS Sentrix ASM · Attack Surface Management
               </span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl xl:text-[3.4rem] font-black tracking-tight leading-[1.08] mb-6">
-              <span className="text-white">Meet Sentrix.</span>
+              <span className="text-white">Meet EDS Sentrix ASM.</span>
               <br />
-              <span className="text-white">The Operating System</span>
+              <span className="text-tactical-gold">Total Attack Surface</span>
               <br />
-              <span className="text-tactical-gold">for Your Perimeter.</span>
+              <span className="text-white">Management.</span>
             </h1>
 
             <p className="text-slate-400 text-lg leading-relaxed mb-8 max-w-lg">
               Cyber threats, workplace safety, and physical defense shouldn't require ten different vendors.
-              Sentrix is the DMV's first unified platform built to manage your{" "}
-              <span className="text-white font-medium">employee training, aerial surveillance, executive protection, and on-demand legal dispatch</span>{" "}
+              EDS Sentrix ASM is the DMV's first unified platform built to manage your{" "}
+              <span className="text-white font-medium">employee compliance, aerial surveillance, executive protection, and on-demand legal dispatch</span>{" "}
               in one secure dashboard.
             </p>
 
@@ -99,7 +99,7 @@ export default function SentrixHero() {
                 <div className="w-3 h-3 rounded-full bg-tactical-gold/70" />
                 <div className="w-3 h-3 rounded-full bg-emerald-500/70" />
                 <div className="flex-1 mx-4 h-5 bg-navy-700/50 rounded-md flex items-center px-3">
-                  <span className="text-[10px] text-slate-500">sentrix.emergingdefensesolutions.com/dashboard</span>
+                  <span className="text-[10px] text-slate-500">asm.emergingdefensesolutions.com/dashboard</span>
                 </div>
                 <Lock className="w-3 h-3 text-emerald-400" />
               </div>

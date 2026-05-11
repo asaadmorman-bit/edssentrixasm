@@ -49,7 +49,7 @@ export default function SentrixProShop() {
               <span className="text-tactical-gold">Partner Perks</span>
             </h2>
             <p className="text-slate-400 text-lg leading-relaxed mb-8">
-              Sentrix users get direct dashboard access to bulk-order{" "}
+              EDS Sentrix ASM users get direct dashboard access to bulk-order{" "}
               <span className="text-white font-medium">5.11 Tactical gear</span> for their security staff and
               implement{" "}
               <span className="text-white font-medium">Right to Bear legal defense policies</span> for their
