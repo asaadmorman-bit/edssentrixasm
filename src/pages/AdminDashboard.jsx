@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LayoutDashboard, Building2, KeyRound, Server, GitBranch, Shield, Users, Lock, Bell, CheckCircle2, X } from "lucide-react";
+import { LayoutDashboard, Building2, KeyRound, Server, GitBranch, Shield, Users, Lock, Bell, CheckCircle2, X, ShieldX } from "lucide-react";
 import AdminDashboardOverview from "../components/admin/AdminDashboardOverview";
 import OrgOverview from "../components/admin/OrgOverview";
 import LicenseManager from "../components/admin/LicenseManager";
@@ -7,6 +7,9 @@ import InfraManager from "../components/admin/InfraManager";
 import SDLCTracker from "../components/admin/SDLCTracker";
 import RBACMatrix from "../components/admin/RBACMatrix";
 import { toast } from "sonner";
+import { useAuth } from "@/lib/AuthContext";
+
+const ALLOWED_DOMAINS = ["emergingdefensesolutions.com", "eds-360.com"];
 
 const tabs = [
   { id: "overview",  label: "Overview",       icon: LayoutDashboard },
@@ -19,6 +22,32 @@ const tabs = [
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
+  const { user } = useAuth();
+
+  const emailDomain = user?.email?.split("@")[1]?.toLowerCase();
+  const isAllowed = ALLOWED_DOMAINS.includes(emailDomain);
+
+  if (!isAllowed) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center px-4">
+        <div className="w-20 h-20 bg-destructive/10 border border-destructive/20 rounded-full flex items-center justify-center">
+          <ShieldX className="w-10 h-10 text-destructive" />
+        </div>
+        <div>
+          <h2 className="text-2xl font-bold text-foreground">Access Restricted</h2>
+          <p className="text-muted-foreground mt-2 max-w-sm">
+            This area is restricted to Emerging Defense Solutions staff only.
+            Please sign in with an <span className="text-foreground font-medium">@emergingdefensesolutions.com</span> or{" "}
+            <span className="text-foreground font-medium">@eds-360.com</span> email address.
+          </p>
+        </div>
+        <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-lg text-sm text-muted-foreground">
+          <Shield className="w-4 h-4" />
+          Signed in as: <span className="font-medium text-foreground">{user?.email || "Unknown"}</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-full">
