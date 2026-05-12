@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ArrowRight, Play, CheckCircle2, MapPin, ShieldCheck, UserCheck, Plane, Scale } from "lucide-react";
 import { toast } from "sonner";
+import { base44 } from "@/api/base44Client";
 
 const modules = [
   { icon: ShieldCheck, label: "Compliance LMS", color: "text-blue-400" },
@@ -13,11 +14,16 @@ export default function HeroSection({ onScrollToWaitlist }) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email.includes("@")) { toast.error("Please enter a valid email."); return; }
     setSubmitted(true);
     toast.success("Beta access requested! We'll be in touch within 24 hours.");
+    await base44.integrations.Core.SendEmail({
+      to: "info@eds-360.com",
+      subject: "New Beta Access Request — EDS Sentrix ASM",
+      body: `A new beta access request was submitted from the hero section.\n\nEmail: ${email}`,
+    });
   };
 
   return (

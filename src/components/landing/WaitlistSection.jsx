@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ArrowRight, CheckCircle2, Zap, Gift, Tag } from "lucide-react";
 import { toast } from "sonner";
+import { base44 } from "@/api/base44Client";
 
 const perks = [
   { icon: Gift, text: "First 3 legal dispatches — free" },
@@ -13,11 +14,16 @@ export default function WaitlistSection() {
   const [org, setOrg] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email.includes("@")) { toast.error("Please enter a valid email."); return; }
     setSubmitted(true);
     toast.success("You've secured your beta spot!");
+    await base44.integrations.Core.SendEmail({
+      to: "info@eds-360.com",
+      subject: "New Waitlist Signup — EDS Sentrix ASM Beta",
+      body: `A new beta waitlist submission was received.\n\nOrganization: ${org}\nEmail: ${email}`,
+    });
   };
 
   return (

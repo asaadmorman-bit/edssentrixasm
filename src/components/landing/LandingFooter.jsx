@@ -22,6 +22,7 @@ export default function LandingFooter() {
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             <Link to="/privacy" className="text-slate-500 hover:text-slate-300 text-xs transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="text-slate-500 hover:text-slate-300 text-xs transition-colors">Terms of Service</Link>
+            <a href="mailto:info@eds-360.com" className="text-slate-500 hover:text-slate-300 text-xs transition-colors">info@eds-360.com</a>
             <a href="#" className="text-slate-500 hover:text-slate-300 text-xs transition-colors">emergingdefensesolutions.com</a>
           </div>
 
