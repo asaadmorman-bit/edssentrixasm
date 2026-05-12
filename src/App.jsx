@@ -17,6 +17,8 @@ import AuditLogs from './pages/AuditLogs';
 import AdminSettings from './pages/AdminSettings';
 import DevSecOps from './pages/DevSecOps';
 import SOCaaS from './pages/SOCaaS';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -42,6 +44,8 @@ const AuthenticatedApp = () => {
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/sentrix" element={<Sentrix />} />
+      <Route path="/privacy" element={<PrivacyPolicy />} />
+      <Route path="/terms" element={<TermsOfService />} />
       <Route element={<AppLayout />}>
         <Route path="/app" element={<Dashboard />} />
         <Route path="/app/training" element={<Training />} />

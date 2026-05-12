@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Shield } from "lucide-react";
 
 export default function LandingFooter() {
@@ -19,8 +20,8 @@ export default function LandingFooter() {
 
           {/* Links */}
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-            <a href="#" className="text-slate-500 hover:text-slate-300 text-xs transition-colors">Privacy Policy</a>
-            <a href="#" className="text-slate-500 hover:text-slate-300 text-xs transition-colors">Terms of Service</a>
+            <Link to="/privacy" className="text-slate-500 hover:text-slate-300 text-xs transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="text-slate-500 hover:text-slate-300 text-xs transition-colors">Terms of Service</Link>
             <a href="#" className="text-slate-500 hover:text-slate-300 text-xs transition-colors">emergingdefensesolutions.com</a>
           </div>
 
