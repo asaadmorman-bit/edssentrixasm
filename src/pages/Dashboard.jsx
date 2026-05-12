@@ -29,7 +29,7 @@ export default function Dashboard() {
 
   const handleDispatch = (label) => {
     setDispatchClicked(label);
-    toast.success(`${label.replace("\n", " ")} — Request initiated. Routing to Dispatch Center.`);
+    toast.success(`${label.replace(/\n/g, " ")} — Request initiated. Routing to Dispatch Center.`);
     setTimeout(() => setDispatchClicked(null), 2000);
   };
 
@@ -148,7 +148,7 @@ export default function Dashboard() {
                 <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/60 transition-colors cursor-pointer">
                   <div className="w-10 h-10 bg-primary/5 rounded-lg flex flex-col items-center justify-center shrink-0 border border-border/60">
                     <span className="text-[9px] font-bold text-muted-foreground">{event.date.split(" ")[0].toUpperCase()}</span>
-                    <span className="text-sm font-black text-foreground">{event.date.split(" ")[1].replace(",", "")}</span>
+                    <span className="text-sm font-black text-foreground">{event.date.split(" ")[1].replace(/,/g, "")}</span>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-foreground">{event.title}</p>
