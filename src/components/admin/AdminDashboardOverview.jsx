@@ -2,6 +2,7 @@ import React from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Building2, KeyRound, Server, GitBranch, TrendingUp, AlertTriangle } from "lucide-react";
+import LicenseSeatChart from "./LicenseSeatChart";
 import { differenceInDays, parseISO } from "date-fns";
 
 export default function AdminDashboardOverview() {
@@ -54,6 +55,8 @@ export default function AdminDashboardOverview() {
           </div>
         ))}
       </div>
+
+      <LicenseSeatChart licenses={licenses} orgs={orgs} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Upcoming License Expirations */}
