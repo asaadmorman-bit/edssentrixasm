@@ -38,6 +38,11 @@
       "type": "string",
       "description": "Additional message from the applicant"
     },
+    "description": {
+      "type": "string",
+      "description": "Optional additional description (up to 1000 characters)",
+      "maxLength": 1000
+    },
     "approval_status": {
       "type": "string",
       "enum": [
