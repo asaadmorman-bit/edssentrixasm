@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { KeyRound, Plus, CheckCircle2, XCircle, Clock, AlertTriangle, Pencil, Trash2, RefreshCw, BarChart2, ShieldOff } from "lucide-react";
+import { KeyRound, Plus, CheckCircle2, XCircle, Clock, AlertTriangle, Pencil, Trash2, RefreshCw, BarChart2, ShieldOff, Layers } from "lucide-react";
+import BulkLicenseModal from "./BulkLicenseModal";
 import { toast } from "sonner";
 import { format, parseISO, differenceInDays } from "date-fns";
 import LicenseFormModal from "./LicenseFormModal";
@@ -36,6 +37,18 @@ export default function LicenseManager() {
   const [showCreate, setShowCreate] = useState(false);
   const [reporting, setReporting] = useState(false);
   const [suspending, setSuspending] = useState(false);
+  const [selected, setSelected] = useState(new Set());
+  const [showBulk, setShowBulk] = useState(false);
+
+  const toggleSelect = (id) => setSelected(prev => {
+    const next = new Set(prev);
+    next.has(id) ? next.delete(id) : next.add(id);
+    return next;
+  });
+
+  const toggleAll = () => setSelected(prev =>
+    prev.size === licenses.length ? new Set() : new Set(licenses.map(l => l.id))
+  );
 
   const runReport = async () => {
     setReporting(true);
@@ -112,6 +125,22 @@ export default function LicenseManager() {
         ))}
       </div>
 
+      {/* Bulk action toolbar */}
+      {selected.size > 0 && (
+        <div className="flex items-center gap-3 px-4 py-2.5 bg-tactical-gold/10 border border-tactical-gold/30 rounded-xl">
+          <span className="text-sm font-bold text-tactical-gold">{selected.size} selected</span>
+          <button
+            onClick={() => setShowBulk(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-tactical-gold hover:bg-tactical-amber text-navy-900 text-xs font-bold rounded-lg transition-all active:scale-95"
+          >
+            <Layers className="w-3.5 h-3.5" /> Bulk Update
+          </button>
+          <button onClick={() => setSelected(new Set())} className="text-xs text-muted-foreground hover:text-foreground ml-auto">
+            Clear selection
+          </button>
+        </div>
+      )}
+
       <div className="flex flex-wrap items-center justify-end gap-2">
         <button onClick={runReport} disabled={reporting} className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-400 text-sm font-bold rounded-lg transition-all active:scale-95 disabled:opacity-50">
           <BarChart2 className="w-4 h-4" /> {reporting ? 'Creating Report…' : 'Run Usage Report → ClickUp'}
@@ -137,6 +166,14 @@ export default function LicenseManager() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border/60 bg-muted/30">
+                  <th className="px-4 py-3 w-8">
+                    <input
+                      type="checkbox"
+                      checked={licenses.length > 0 && selected.size === licenses.length}
+                      onChange={toggleAll}
+                      className="rounded border-border accent-tactical-gold cursor-pointer"
+                    />
+                  </th>
                   {["Organization","Product","Status","Seats","Expiry","Auto-Renew","Price/Seat","Actions"].map(h => (
                     <th key={h} className="text-left px-4 py-3 text-xs font-bold uppercase tracking-widest text-muted-foreground whitespace-nowrap">{h}</th>
                   ))}
@@ -147,7 +184,15 @@ export default function LicenseManager() {
                   const s = statusConfig[lic.status] || statusConfig.pending;
                   const SIcon = s.icon;
                   return (
-                    <tr key={lic.id} className="hover:bg-muted/20 transition-colors">
+                    <tr key={lic.id} className={`hover:bg-muted/20 transition-colors ${selected.has(lic.id) ? "bg-tactical-gold/5" : ""}`}>
+                      <td className="px-4 py-3.5 w-8">
+                        <input
+                          type="checkbox"
+                          checked={selected.has(lic.id)}
+                          onChange={() => toggleSelect(lic.id)}
+                          className="rounded border-border accent-tactical-gold cursor-pointer"
+                        />
+                      </td>
                       <td className="px-4 py-3.5 font-semibold text-foreground">{lic.organization_name || lic.organization_id}</td>
                       <td className="px-4 py-3.5 text-muted-foreground">{productLabels[lic.product] || lic.product}</td>
                       <td className="px-4 py-3.5">
@@ -183,6 +228,14 @@ export default function LicenseManager() {
             </table>
           </div>
         </div>
+      )}
+
+      {showBulk && (
+        <BulkLicenseModal
+          selectedLicenses={licenses.filter(l => selected.has(l.id))}
+          onClose={() => setShowBulk(false)}
+          onSaved={() => { qc.invalidateQueries(["licenses"]); setShowBulk(false); setSelected(new Set()); }}
+        />
       )}
 
       {(showCreate || editLic) && (
