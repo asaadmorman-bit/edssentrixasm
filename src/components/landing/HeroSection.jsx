@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { ArrowRight, Play, CheckCircle2, MapPin, ShieldCheck, UserCheck, Plane, Scale } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowRight, Play, CheckCircle2, MapPin, ShieldCheck, UserCheck, Plane, Scale, Monitor } from "lucide-react";
 import { toast } from "sonner";
 import { base44 } from "@/api/base44Client";
 
@@ -113,36 +114,45 @@ export default function HeroSection({ onScrollToWaitlist }) {
             No credit card required · DMV area businesses only · Limited beta spots
           </p>
 
-          {/* Dashboard mockup */}
+          {/* Interactive Demo CTA */}
           <div className="relative max-w-4xl mx-auto">
             <div className="absolute -inset-4 bg-tactical-gold/5 blur-2xl rounded-3xl" />
-            <div onClick={onScrollToWaitlist} className="relative bg-navy-800 border border-navy-700/60 rounded-2xl overflow-hidden shadow-2xl shadow-black/60 aspect-video flex items-center justify-center group cursor-pointer hover:border-tactical-gold/30 transition-all duration-500">
-              <div className="absolute top-0 left-0 right-0 h-10 bg-navy-900/90 border-b border-navy-700/50 flex items-center px-4 gap-2">
+            <div className="relative bg-navy-800/60 border border-navy-700/60 rounded-2xl overflow-hidden shadow-2xl shadow-black/60">
+              {/* Browser chrome */}
+              <div className="top-0 left-0 right-0 h-10 bg-navy-900/90 border-b border-navy-700/50 flex items-center px-4 gap-2">
                 <div className="w-3 h-3 rounded-full bg-tactical-red/70" />
                 <div className="w-3 h-3 rounded-full bg-tactical-gold/70" />
                 <div className="w-3 h-3 rounded-full bg-emerald-500/70" />
                 <div className="flex-1 mx-4 h-5 bg-navy-700/50 rounded-md flex items-center px-3">
-                  <span className="text-[10px] text-slate-500">asm.emergingdefensesolutions.com/dashboard</span>
+                  <span className="text-[10px] text-slate-500">asm.emergingdefensesolutions.com/demo</span>
                 </div>
               </div>
-              <div className="absolute inset-0 pt-10 flex opacity-20">
-                <div className="w-48 h-full bg-navy-900/80 border-r border-navy-700/40" />
-                <div className="flex-1 p-6 space-y-4">
-                  <div className="h-4 bg-navy-700/60 rounded w-1/3" />
-                  <div className="grid grid-cols-4 gap-3 mt-4">
-                    {[1,2,3,4].map(i => <div key={i} className="h-20 bg-navy-700/40 rounded-lg" />)}
+              {/* Mini dashboard preview */}
+              <div className="p-5 grid grid-cols-4 gap-3">
+                {[
+                  { label: "Readiness", value: "91", color: "text-emerald-400" },
+                  { label: "Licenses", value: "4", color: "text-blue-400" },
+                  { label: "Compliance", value: "96%", color: "text-amber-400" },
+                  { label: "Alerts", value: "2", color: "text-red-400" },
+                ].map((s, i) => (
+                  <div key={i} className="bg-navy-900/80 border border-navy-700/40 rounded-lg p-3 text-center">
+                    <p className={`text-xl font-black ${s.color}`}>{s.value}</p>
+                    <p className="text-[9px] text-slate-500 uppercase tracking-wider mt-0.5">{s.label}</p>
                   </div>
-                  <div className="h-28 bg-navy-700/30 rounded-xl" />
-                </div>
+                ))}
               </div>
-              <div className="relative z-10 flex flex-col items-center gap-4">
-                <div className="w-20 h-20 bg-white/5 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center group-hover:bg-tactical-gold/20 group-hover:border-tactical-gold/40 transition-all duration-300 group-hover:scale-110">
-                  <Play className="w-8 h-8 text-white ml-1" fill="white" />
+              <div className="px-5 pb-5 flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-t from-navy-900/60">
+                <div className="text-left">
+                  <p className="text-white font-bold text-sm">Interactive Platform Demo</p>
+                  <p className="text-slate-400 text-xs mt-0.5">Explore live scenarios: Law Firm · Property Mgmt · Medical Clinic · Corporate</p>
                 </div>
-                <div className="text-center">
-                  <p className="text-slate-300 font-semibold text-sm">Watch Platform Demo</p>
-                  <p className="text-slate-600 text-xs mt-0.5">EDS Sentrix ASM · 2 min walkthrough</p>
-                </div>
+                <Link
+                  to="/demo"
+                  className="shrink-0 flex items-center gap-2 px-5 py-2.5 bg-tactical-gold hover:bg-tactical-amber text-navy-900 font-bold rounded-xl text-sm transition-all duration-200 hover:shadow-xl hover:shadow-tactical-gold/30 active:scale-95"
+                >
+                  <Monitor className="w-4 h-4" />
+                  Try Live Demo
+                </Link>
               </div>
             </div>
           </div>

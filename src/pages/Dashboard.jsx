@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import ReadinessScore from "../components/dashboard/ReadinessScore";
 import StatsRow from "../components/dashboard/StatsRow";
 import TrustBanner from "../components/dashboard/TrustBanner";
-import DemoVideoModal from "../components/dashboard/DemoVideoModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CalendarDays, Bell, FileText, Scissors, Activity, ShieldCheck, CheckCircle2, Play } from "lucide-react";
+import { CalendarDays, Bell, FileText, Scissors, Activity, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 
 const auditFeed = [
@@ -25,7 +24,6 @@ const quickDispatch = [
 
 export default function Dashboard() {
   const [dispatchClicked, setDispatchClicked] = useState(null);
-  const [demoOpen, setDemoOpen] = useState(false);
 
   const handleDispatch = (label) => {
     setDispatchClicked(label);
@@ -35,7 +33,6 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 max-w-7xl">
-      <DemoVideoModal open={demoOpen} onClose={() => setDemoOpen(false)} />
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
@@ -43,13 +40,6 @@ export default function Dashboard() {
           <p className="text-sm text-muted-foreground mt-0.5">Welcome back, John. Here's your EDS Sentrix ASM operational overview.</p>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setDemoOpen(true)}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold hover:bg-amber-500/20 transition-all"
-          >
-            <Play className="w-3.5 h-3.5 fill-amber-400" />
-            Watch Platform Demo
-          </button>
           <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 px-3 py-2 rounded-lg">
             <CalendarDays className="w-3.5 h-3.5" />
             <span>May 11, 2026</span>
