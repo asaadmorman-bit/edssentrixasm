@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Server, Plus, Pencil, Trash2, AlertTriangle, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
+import { Server, Plus, Pencil, Trash2, AlertTriangle, CheckCircle2, XCircle, AlertCircle, Search, Filter } from "lucide-react";
 import { toast } from "sonner";
 import InfraFormModal from "./InfraFormModal";
 
@@ -25,6 +25,8 @@ export default function InfraManager() {
   const qc = useQueryClient();
   const [editAsset, setEditAsset] = useState(null);
   const [showCreate, setShowCreate] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [search, setSearch] = useState("");
 
   const { data: assets = [], isLoading } = useQuery({
     queryKey: ["infra"],
@@ -36,18 +38,30 @@ export default function InfraManager() {
     onSuccess: () => { qc.invalidateQueries(["infra"]); toast.success("Asset removed"); },
   });
 
-  const healthy = assets.filter(a => a.status === "healthy").length;
-  const warning = assets.filter(a => a.status === "warning").length;
+  const healthy  = assets.filter(a => a.status === "healthy").length;
+  const warning  = assets.filter(a => a.status === "warning").length;
   const critical = assets.filter(a => a.status === "critical").length;
+  const offline  = assets.filter(a => a.status === "offline").length;
   const totalCost = assets.reduce((s, a) => s + (a.monthly_cost || 0), 0);
+  const flaggedCount = warning + critical + offline;
+
+  const filtered = assets.filter(a => {
+    const matchStatus = statusFilter === "all" ? true
+      : statusFilter === "flagged" ? ["warning","critical","offline"].includes(a.status)
+      : a.status === statusFilter;
+    const q = search.toLowerCase();
+    const matchSearch = !q || [a.asset_name, a.organization_name, a.ip_address, a.region, a.os, a.asset_type]
+      .some(v => v?.toLowerCase().includes(q));
+    return matchStatus && matchSearch;
+  });
 
   return (
     <div className="space-y-5">
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: "Total Assets", value: assets.length, color: "text-foreground" },
-          { label: "Healthy", value: healthy, color: "text-emerald-400" },
+          { label: "Total Assets",       value: assets.length,           color: "text-foreground" },
+          { label: "Healthy",            value: healthy,                  color: "text-emerald-400" },
           { label: "Warning / Critical", value: `${warning} / ${critical}`, color: warning + critical > 0 ? "text-amber-400" : "text-emerald-400" },
           { label: "Monthly Infra Cost", value: `$${totalCost.toLocaleString()}`, color: "text-tactical-gold" },
         ].map(s => (
@@ -58,18 +72,75 @@ export default function InfraManager() {
         ))}
       </div>
 
-      <div className="flex justify-end">
-        <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 bg-tactical-gold hover:bg-tactical-amber text-navy-900 text-sm font-bold rounded-lg transition-all active:scale-95">
-          <Plus className="w-4 h-4" /> Add Asset
-        </button>
+      {/* Flagged alert banner */}
+      {flaggedCount > 0 && (
+        <div className="flex items-center gap-3 px-4 py-3 bg-red-500/10 border border-red-500/25 rounded-xl">
+          <AlertTriangle className="w-5 h-5 text-red-400 shrink-0" />
+          <p className="text-sm text-red-300 font-semibold">
+            {flaggedCount} asset{flaggedCount > 1 ? "s" : ""} need{flaggedCount === 1 ? "s" : ""} attention —&nbsp;
+            {critical > 0 && <span className="text-red-400">{critical} critical</span>}
+            {critical > 0 && warning > 0 && ", "}
+            {warning > 0 && <span className="text-amber-400">{warning} warning</span>}
+            {(critical > 0 || warning > 0) && offline > 0 && ", "}
+            {offline > 0 && <span className="text-slate-400">{offline} offline</span>}
+          </p>
+          <button
+            onClick={() => setStatusFilter("flagged")}
+            className="ml-auto text-xs font-bold text-red-400 hover:text-red-300 underline underline-offset-2 whitespace-nowrap"
+          >
+            View flagged →
+          </button>
+        </div>
+      )}
+
+      {/* Filter + Search + Add */}
+      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+        <div className="flex gap-0.5 border-b border-border/60">
+          {[
+            { id: "all",      label: `All (${assets.length})` },
+            { id: "flagged",  label: `Needs Attention (${flaggedCount})`, alert: flaggedCount > 0 },
+            { id: "critical", label: `Critical (${critical})` },
+            { id: "warning",  label: `Warning (${warning})` },
+            { id: "offline",  label: `Offline (${offline})` },
+            { id: "healthy",  label: `Healthy (${healthy})` },
+          ].map(f => (
+            <button
+              key={f.id}
+              onClick={() => setStatusFilter(f.id)}
+              className={`px-3 py-2 text-xs font-semibold border-b-2 -mb-px transition-colors whitespace-nowrap ${
+                statusFilter === f.id
+                  ? "border-tactical-gold text-tactical-gold"
+                  : f.alert
+                    ? "border-transparent text-red-400 hover:text-red-300"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search assets…"
+              className="pl-8 pr-3 h-9 w-44 bg-muted border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
+            />
+          </div>
+          <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 bg-tactical-gold hover:bg-tactical-amber text-navy-900 text-sm font-bold rounded-lg transition-all active:scale-95">
+            <Plus className="w-4 h-4" /> Add Asset
+          </button>
+        </div>
       </div>
 
       {isLoading ? (
         <div className="text-center py-12 text-muted-foreground text-sm">Loading...</div>
-      ) : assets.length === 0 ? (
+      ) : filtered.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground text-sm">
           <Server className="w-10 h-10 mx-auto mb-3 opacity-30" />
-          No infrastructure assets tracked.
+          {assets.length === 0 ? "No infrastructure assets tracked." : "No assets match the current filter."}
         </div>
       ) : (
         <div className="bg-card border border-border/60 rounded-xl overflow-hidden">
@@ -83,11 +154,12 @@ export default function InfraManager() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/30">
-                {assets.map(asset => {
+                {filtered.map(asset => {
                   const s = statusConfig[asset.status] || statusConfig.healthy;
                   const SIcon = s.icon;
+                  const isFlagged = ["warning","critical","offline"].includes(asset.status);
                   return (
-                    <tr key={asset.id} className="hover:bg-muted/20 transition-colors">
+                    <tr key={asset.id} className={`hover:bg-muted/20 transition-colors ${isFlagged ? "bg-red-500/[0.03] border-l-2 border-l-red-500/40" : ""}`}>
                       <td className="px-4 py-3.5">
                         <p className="font-semibold text-foreground">{asset.asset_name}</p>
                         {asset.os && <p className="text-[10px] text-muted-foreground">{asset.os}</p>}
