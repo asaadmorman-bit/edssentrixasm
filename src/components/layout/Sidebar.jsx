@@ -12,12 +12,14 @@ import {
   ShieldAlert,
   Settings,
   GitBranch,
-  MonitorCheck
+  MonitorCheck,
+  Building2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "Command Center", icon: LayoutDashboard, path: "/app" },
+  { label: "Client Portal", icon: Building2, path: "/app/portal" },
   { label: "SOCaaS / MSSP Monitor", icon: MonitorCheck, path: "/app/socaas" },
   { label: "Dispatch Center", icon: Radio, path: "/app/dispatch" },
   { label: "Compliance LMS", icon: GraduationCap, path: "/app/training" },
