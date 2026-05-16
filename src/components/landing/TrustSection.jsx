@@ -14,8 +14,8 @@ const pillars = [
   },
   {
     icon: Server,
-    title: "Microsoft Azure Hosting",
-    body: "Enterprise-grade cloud infrastructure with 99.9% uptime SLA, geo-redundant backups, and SOC 2 compliance built in.",
+    title: "Google Cloud (GCP) Hosting",
+    body: "Enterprise-grade cloud infrastructure on GCP with 99.9% uptime SLA, geo-redundant backups, and SOC 2 compliance built in.",
   },
 ];
 
@@ -51,7 +51,7 @@ export default function TrustSection() {
           </h2>
           <p className="text-slate-400 text-lg leading-relaxed">
             Your data is secured behind Cloudflare's Zero Trust network and continuously scanned by
-            Aikido Security. Hosted on Microsoft Azure for 99.9% uptime.
+            Aikido Security. Hosted on Google Cloud (GCP) for 99.9% uptime.
           </p>
         </div>
 

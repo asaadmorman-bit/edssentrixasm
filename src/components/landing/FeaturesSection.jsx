@@ -59,7 +59,7 @@ const features = [
     iconColor: "text-tactical-red",
     tag: "Partner Pro Shop",
     title: "B2B Partner Pro Shop",
-    body: "Bulk-order 5.11 Tactical gear for your security team, enroll in Right to Bear legal defense policies, and request Cisco Meraki or Azure upgrades — all in-dashboard.",
+    body: "Bulk-order 5.11 Tactical gear for your security team, enroll in Right to Bear legal defense policies, and request Cisco Meraki or GCP upgrades — all in-dashboard.",
     cta: "Browse Pro Shop",
     href: "/app/shop",
   },

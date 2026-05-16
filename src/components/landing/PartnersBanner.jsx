@@ -2,7 +2,7 @@ import React from "react";
 import { Cloud, Shield, Lock, Cpu, Shirt, Scale } from "lucide-react";
 
 const partners = [
-  { name: "Microsoft Azure", icon: Cloud },
+  { name: "Google Cloud", icon: Cloud },
   { name: "Cisco", icon: Cpu },
   { name: "Cloudflare", icon: Shield },
   { name: "Aikido Security", icon: Lock },
