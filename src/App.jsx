@@ -20,6 +20,7 @@ import DevSecOps from './pages/DevSecOps';
 import ClientPortal from './pages/ClientPortal';
 import SOCaaS from './pages/SOCaaS';
 import Infrastructure from './pages/Infrastructure';
+import SDWANDashboard from './pages/SDWANDashboard';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import Demo from './pages/Demo';
@@ -61,6 +62,7 @@ const AuthenticatedApp = () => {
         <Route path="/app/devsecops" element={<DevSecOps />} />
         <Route path="/app/socaas" element={<SOCaaS />} />
         <Route path="/app/infrastructure" element={<Infrastructure />} />
+        <Route path="/app/sdwan" element={<SDWANDashboard />} />
         <Route path="/app/portal" element={<ClientPortal />} />
         <Route path="/app/admin" element={<AdminDashboard />} />
       </Route>

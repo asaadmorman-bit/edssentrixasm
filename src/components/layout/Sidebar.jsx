@@ -14,7 +14,8 @@ import {
   GitBranch,
   MonitorCheck,
   Building2,
-  Network
+  Network,
+  Wifi
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +24,7 @@ const navItems = [
   { label: "Client Portal", icon: Building2, path: "/app/portal" },
   { label: "SOCaaS / MSSP Monitor", icon: MonitorCheck, path: "/app/socaas" },
   { label: "Infrastructure & Ops", icon: Network, path: "/app/infrastructure" },
+  { label: "SD-WAN Health & HA", icon: Wifi, path: "/app/sdwan" },
   { label: "Dispatch Center", icon: Radio, path: "/app/dispatch" },
   { label: "Compliance LMS", icon: GraduationCap, path: "/app/training" },
   { label: "Tactical Ops & Gear", icon: ShoppingBag, path: "/app/shop" },
