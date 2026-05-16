@@ -15,11 +15,54 @@ const statusConfig = {
 const providerBadge = {
   azure:       "text-blue-300 bg-blue-500/10 border-blue-500/20",
   aws:         "text-orange-300 bg-orange-500/10 border-orange-500/20",
-  gcp:         "text-yellow-300 bg-yellow-500/10 border-yellow-500/20",
+  gcp:         "text-sky-300 bg-sky-500/10 border-sky-500/20",
   cloudflare:  "text-amber-300 bg-amber-500/10 border-amber-500/20",
   on_premise:  "text-slate-300 bg-slate-500/10 border-slate-500/20",
   other:       "text-muted-foreground bg-muted/40 border-border",
 };
+
+const providerIcon = {
+  gcp: "☁️",
+  aws: "🟠",
+  azure: "🔷",
+  cloudflare: "🟡",
+  on_premise: "🖥️",
+  other: "🔲",
+};
+
+// Returns a colored OS badge for Linux distros and others
+function OsBadge({ os }) {
+  if (!os) return null;
+  const lower = os.toLowerCase();
+  let color = "text-muted-foreground bg-muted/40 border-border";
+  let icon = "🐧";
+
+  if (lower.includes("ubuntu")) {
+    color = "text-orange-300 bg-orange-500/10 border-orange-500/20";
+    icon = "🟠";
+  } else if (lower.includes("debian")) {
+    color = "text-red-300 bg-red-500/10 border-red-500/20";
+    icon = "🔴";
+  } else if (lower.includes("rocky") || lower.includes("rhel") || lower.includes("centos") || lower.includes("fedora")) {
+    color = "text-green-300 bg-green-500/10 border-green-500/20";
+    icon = "🪨";
+  } else if (lower.includes("alpine")) {
+    color = "text-blue-300 bg-blue-500/10 border-blue-500/20";
+    icon = "🏔️";
+  } else if (lower.includes("windows")) {
+    color = "text-sky-300 bg-sky-500/10 border-sky-500/20";
+    icon = "🪟";
+  } else if (lower.includes("macos") || lower.includes("darwin")) {
+    color = "text-slate-300 bg-slate-500/10 border-slate-500/20";
+    icon = "🍎";
+  }
+
+  return (
+    <span className={`inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded border mt-0.5 ${color}`}>
+      <span>{icon}</span>{os}
+    </span>
+  );
+}
 
 export default function InfraManager() {
   const qc = useQueryClient();
@@ -162,12 +205,13 @@ export default function InfraManager() {
                     <tr key={asset.id} className={`hover:bg-muted/20 transition-colors ${isFlagged ? "bg-red-500/[0.03] border-l-2 border-l-red-500/40" : ""}`}>
                       <td className="px-4 py-3.5">
                         <p className="font-semibold text-foreground">{asset.asset_name}</p>
-                        {asset.os && <p className="text-[10px] text-muted-foreground">{asset.os}</p>}
+                        <OsBadge os={asset.os} />
                       </td>
                       <td className="px-4 py-3.5 text-muted-foreground capitalize text-xs">{asset.asset_type?.replace(/_/g, " ")}</td>
                       <td className="px-4 py-3.5">
-                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border ${providerBadge[asset.provider] || providerBadge.other}`}>
-                          {asset.provider?.replace(/_/g, " ")}
+                        <span className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border ${providerBadge[asset.provider] || providerBadge.other}`}>
+                          <span>{providerIcon[asset.provider] || "🔲"}</span>
+                          {asset.provider === "gcp" ? "Google Cloud" : asset.provider?.replace(/_/g, " ")}
                         </span>
                       </td>
                       <td className="px-4 py-3.5">
