@@ -40,14 +40,17 @@ async function createTask(accessToken, listId, name, description, priority = 2, 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    if (!user || user.role !== 'admin') {
+
+    // Allow both scheduled automations (no user) and manual admin calls
+    const user = await base44.auth.me().catch(() => null);
+    if (user && user.role !== 'admin') {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const body = await req.json().catch(() => ({}));
     const mode = body.mode || 'report'; // 'report' | 'suspend_check'
 
+    // Use service role to retrieve the connector — works for both scheduled and user-triggered runs
     const { accessToken } = await base44.asServiceRole.connectors.getCurrentAppUserConnection(CONNECTOR_ID);
     const listId = await getClickUpListId(accessToken);
 
